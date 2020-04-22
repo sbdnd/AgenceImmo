@@ -2,3 +2,9 @@
 #    path: /
 #    controller: App\Controller\DefaultController::index
 
+login_check:
+    path: /login_check
+
+logout:
+    path: /logout
+  
