@@ -23,8 +23,8 @@ class PropertyRepository extends ServiceEntityRepository
     }
 
     /**
-     * Undocumented function
-     *
+     * Méthode qui récupère tous les biens non vendus
+     * Elle utilise la fonction findSoldQuery
      * @return Property[]
      */
     public function findAllVisible() : array
@@ -35,6 +35,8 @@ class PropertyRepository extends ServiceEntityRepository
         ;
     }
     /**
+     * Méthode qui récupère les 4 derniers biens non vendus
+     * Elle utilise la fonction findSoldQuery
      * @return Property[]
      */
     public function findFourLatest() : array
@@ -46,6 +48,11 @@ class PropertyRepository extends ServiceEntityRepository
         ;
     }
 
+    /**
+     * Méthode qui créer une requête récupérant tous les biens non vendus (champ sold à false) 
+     * Cette fonction est utilisé par les autres fonctions (permet de factoriser le code). Elle retourne un Querybuilder. 
+     * @return QueryBuilder
+     */
     private function findSoldQuery(): QueryBuilder
     {
         return $this->createQueryBuilder('p')
