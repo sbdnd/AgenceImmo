@@ -3,6 +3,8 @@
 namespace App\Controller;
 
 use App\Entity\Property;
+use App\Entity\PropertyFilter;
+use App\Form\PropertyFilterType;
 use App\Repository\PropertyRepository;
 use Doctrine\ORM\EntityManagerInterface;
 use Knp\Component\Pager\PaginatorInterface;
@@ -11,6 +13,7 @@ use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
+use Symfony\Component\Form\FormView;
 
 class PropertyController extends AbstractController
 {   
@@ -18,6 +21,7 @@ class PropertyController extends AbstractController
     private $em;
 
     /**
+     * Initialisation du repository et entityManager à utiliser dans plusieurs méthodes du controller
      * @param PropertyRepository $repository
      * @param EntityManagerInterface $em
      */
@@ -33,7 +37,11 @@ class PropertyController extends AbstractController
      */
     public function index(Request $request, PaginatorInterface $paginator) : Response
     {   
-        $properties = $this->repository->findAllVisible();
+        $filter = new PropertyFilter();
+        $form = $this->createForm(PropertyFilterType::class, $filter);
+        $form->handleRequest($request);
+
+        $properties = $this->repository->findAllVisible($filter);
         $propertiesPagination = $paginator->paginate(
             $properties,
             $request->query->getInt('page', 1), //numéro de page envoyer par la reqête
@@ -42,7 +50,8 @@ class PropertyController extends AbstractController
 
         return $this->render('property/index.html.twig', [
             'active_menu' => 'active',
-            'properties' => $propertiesPagination
+            'properties' => $propertiesPagination,
+            'form' => $form->createView()
         ]);
     }
 

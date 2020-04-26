@@ -2,7 +2,9 @@
 
 namespace App\Repository;
 
+use Doctrine\ORM\Query;
 use App\Entity\Property;
+use App\Entity\PropertyFilter;
 use Doctrine\ORM\QueryBuilder;
 use PhpParser\Node\Expr\Cast\Array_;
 use Doctrine\Persistence\ManagerRegistry;
@@ -25,15 +27,31 @@ class PropertyRepository extends ServiceEntityRepository
     /**
      * Méthode qui récupère tous les biens non vendus
      * Elle utilise la fonction findSoldQuery
-     * @return Property[]
+     * @return PRoperty[]
      */
-    public function findAllVisible() : array
+    public function findAllVisible(PropertyFilter $filter) : array
     {
-        return $this->findSoldQuery()
-            ->getQuery()
-            ->getResult()
-        ;
+        $query = $this->findSoldQuery();
+
+        if($filter->getMaxPrice())
+        {
+            $query = $query
+                        ->andWhere('p.price <= :maxprice')
+                        ->setParameter('maxprice', $filter->getMaxPrice());
+        }
+
+        if($filter->getMinSurface())
+        {
+            $query = $query
+                        ->andWhere('p.surface >= :minsurface')
+                        ->setParameter('minsurface', $filter->getMinSurface());
+        }
+
+        return $query
+                    ->getQuery()
+                    ->getResult();
     }
+
     /**
      * Méthode qui récupère les 4 derniers biens non vendus
      * Elle utilise la fonction findSoldQuery
