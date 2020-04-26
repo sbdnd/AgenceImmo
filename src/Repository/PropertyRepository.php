@@ -27,9 +27,9 @@ class PropertyRepository extends ServiceEntityRepository
     /**
      * Méthode qui récupère tous les biens non vendus
      * Elle utilise la fonction findSoldQuery
-     * @return PRoperty[]
+     * @return Query
      */
-    public function findAllVisible(PropertyFilter $filter) : array
+    public function findAllVisible(PropertyFilter $filter) : Query
     {
         $query = $this->findSoldQuery();
 
@@ -47,9 +47,21 @@ class PropertyRepository extends ServiceEntityRepository
                         ->setParameter('minsurface', $filter->getMinSurface());
         }
 
+        if($filter->getOptions()->count() > 0 )
+        {
+            $i = 0;
+            foreach($filter->getOptions() as $option)
+            {
+                $i++;
+                $query = $query
+                        ->andWhere(":option$i MEMBER OF p.options")
+                        ->setParameter("option$i", $option);
+            }
+        }
+
         return $query
-                    ->getQuery()
-                    ->getResult();
+                    ->getQuery();
+                    //->getResult();
     }
 
     /**

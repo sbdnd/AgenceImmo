@@ -13,11 +13,15 @@
                 <div class="col">
                     {{ form_row(form.maxPrice) }}
                 </div>
-                    <div class="col">
-                        <div class="form-group">
-                            <button class="btn btn-primary">Filtrer</button>
-                        </div>
+                <div class="col">
+                    {{ form_row(form.options) }}
+                </div>
+
+                <div class="col">
+                    <div class="form-group">
+                        <button class="btn btn-primary">Filtrer</button>
                     </div>
+                </div>
             </div>
             {{ form_end(form) }}
         </div>
